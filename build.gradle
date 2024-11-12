@@ -1,0 +1,68 @@
+// Based on
+// https://www.jetbrains.com/help/idea/getting-started-with-gradle.html
+
+plugins {
+    // the java plugin ...
+    id 'java'
+    // the application plugin ...
+    id 'application'
+    // the protobuf plugin ...
+    id "com.google.protobuf" version "0.9.4"
+}
+
+group 'org.example'     //
+version '1.0-SNAPSHOT'  //
+
+repositories {
+    // configure where gradle will find dependencies
+    mavenCentral()
+}
+
+dependencies {
+    // dependencies scoped to src/test ---------------------------------------
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    // dependencies scoped to src/main/java ----------------------------------
+    // dependency on the protobuf Java runtime.
+    implementation 'com.google.protobuf:protobuf-java:4.28.3'
+
+}
+
+test {
+    // configure gradle to run tests with JUnit
+    useJUnitPlatform()
+}
+
+protobuf {
+    // protoc complies protocol buffers into java code
+    // This config tells gradle where to find protoc
+    // Select pre-compiled protoc from maven central
+    protoc {
+        // Download from repositories
+        artifact = 'com.google.protobuf:protoc:4.28.3'
+    }
+    generateProtoTasks {
+        // all() returns the collection of all protoc tasks
+        all().configureEach {task ->
+            task.builtins {
+                java {
+                    //generatedFilesBaseDir = "${projectDir}/src"
+                }
+            }
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "com.tonyzaro.application.Application"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+application {
+    mainClassName = "com.tonyzaro.application.Application"
+}

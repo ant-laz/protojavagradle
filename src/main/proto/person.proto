@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+// The .proto file starts with a package declaration, prevents naming conflicts
+package person;
+
+//enables generating a separate .java file for each generated class
+option java_multiple_files = true;
+//  what Java package name your generated classes should live
+option java_package = "com.tonyzaro.model";
+//  the class name of the wrapper class which will represent this file
+option java_outer_classname = "PersonProtos";
+
+message Person {
+  string name = 1;
+  int64 age = 2;
+}
